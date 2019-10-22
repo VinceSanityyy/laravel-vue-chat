@@ -13,9 +13,10 @@ class ContactsController extends Controller
         // $contacts = \DB::table('users')->get();
 
 
-        // $contacts = User::where('id', '!=', auth()->id())->get();
+        $contacts = User::where('id', '!=', auth()->id())->get();
 
-        Message::where('from', $id)->where('to', auth()->id()->update(['read'=> true]));
+        // Message::where('from', $id)->where('to', auth()->id()->update(['read'=> true]));
+      
 
         $unreadMsg = Message::select(\DB::raw('`from` as sender_id, count(`from`) as messages_count'))
                         ->where('to', auth()->id())
@@ -37,7 +38,8 @@ class ContactsController extends Controller
     }
 
     public function getMessagesFor($id){
-        $messages = Message::where('from', $id)->orWhere('to', $id)->get();
+        // $messages = Message::where('from', $id)->orWhere('to', $id)->get();
+        Message::where('from', $id)->where('to', auth()->id())->update(['read' => true]);
 
         $messages = Message::where(function($q) use ($id){
             $q->where('from', auth()->id());
